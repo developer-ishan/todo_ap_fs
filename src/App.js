@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { Button, Input, InputLabel, FormControl } from "@material-ui/core";
+import { Button, Input, InputLabel, FormControl, ListItem, List } from "@material-ui/core";
 import Todo from "./Todo";
 import { db } from "./firebase";
 import firebase from 'firebase';
@@ -16,7 +16,11 @@ function App() {
 
   useEffect(() => {
     db.collection('todos').orderBy('timestamp', 'desc').onSnapshot( snapshot => {
-      setTodos(snapshot.docs.map(doc => (doc.data())))
+      setTodos(snapshot.docs.map(doc => ({
+        id       : doc.id,
+        task     : doc.data().task,
+        timestamp: doc.data().timestamp
+      })))
     })
   }, []);
 
@@ -58,11 +62,11 @@ function App() {
         </Button>
       </form>
 
-      <ul>
+      <List className="todo_list">
         {todos.map((todo) => (
-          <Todo text={todo.task}/>
+          <Todo todo={todo} />
         ))}
-      </ul>
+      </List>
     </div>
   );
 }
